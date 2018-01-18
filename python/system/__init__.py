@@ -3,7 +3,6 @@
 
 #__all__=['log', 'scopelog', 'config']
 
-from .log import *
 from .config import *
 from .pythonLib import *
-
+import log

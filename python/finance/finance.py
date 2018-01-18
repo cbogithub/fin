@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from system.log import *
 
-loger=log('finance')
+import system.log
+
+financeLog = system.log.getStreamLogger('finance')
 
 '''
 abstract model
@@ -143,13 +144,13 @@ class account:
         self.measure              = measureCommodity
         self.positions            = {}
 
-    def getPosition(commodity):
+    def getPosition(self, commodity):
         return self.positions[commodity] 
 
-    def balance():
+    def balance(self):
         return self.positions[self.measure].quantity
 
-    def changePosition():
+    def changePosition(self):
         return self.agent.orderRequest()
 
 

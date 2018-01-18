@@ -10,28 +10,28 @@ huobi_cny_btc2 = huobiAgentREST(configer.get("huobi","accessKey"), configer.get(
 huobi_cny_ltc2 = huobiAgentREST(configer.get("huobi","accessKey"), configer.get("huobi", "secretKey"), CNY, LTC)
 
 
-loger.info("============== API V3 ===============")
-loger.info("--------------------- getAccountInfo:")
-loger.info(huobi_cny_btc.getAccountInfo.run())
+financeLog.info("============== API V3 ===============")
+financeLog.info("--------------------- getAccountInfo:")
+financeLog.info(huobi_cny_btc.getAccountInfo.run())
 
-loger.info("--------------------- getMarketDepth:")
-loger.info(huobi_cny_btc.getMarketDepth.run())
+financeLog.info("--------------------- getMarketDepth:")
+financeLog.info(huobi_cny_btc.getMarketDepth.run())
 
-loger.info("--------------------- getTicker:")
-loger.info(huobi_cny_btc.getTicker.run())
+financeLog.info("--------------------- getTicker:")
+financeLog.info(huobi_cny_btc.getTicker.run())
 
-loger.info("============= REST API ===============")
-loger.info("--------------------- getKlines:")
-loger.info(huobi_cny_btc2.getKlines.run(Kmap.period.m1, 5))
+financeLog.info("============= REST API ===============")
+financeLog.info("--------------------- getKlines:")
+financeLog.info(huobi_cny_btc2.getKlines.run(Kmap.period.m1, 5))
 
-loger.info("--------------------- getMarketDepth:")
-loger.info(huobi_cny_btc2.getMarketDepth.run(4))
+financeLog.info("--------------------- getMarketDepth:")
+financeLog.info(huobi_cny_btc2.getMarketDepth.run(4))
 
-loger.info("--------------------- getSymbols")
-loger.info(huobi_cny_btc2.getSymbols.run())
+financeLog.info("--------------------- getSymbols")
+financeLog.info(huobi_cny_btc2.getSymbols.run())
 
-loger.info("--------------------- getAccounts")
-loger.info(huobi_cny_btc2.getAccounts.run())
+financeLog.info("--------------------- getAccounts")
+financeLog.info(huobi_cny_btc2.getAccounts.run())
 
 
 

@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from system.log import *
+from system import log
 from system.config import *
 
 '''
 log test
 '''
-loger=log("test", log.DEBUG)
+loger=log.getStreamLogger("test", log.DEBUG)
 
 loger.debug('============= test log ========')
 loger.debug('debug')
@@ -16,8 +16,8 @@ loger.warning('warning')
 loger.error('error')
 loger.critical('critical')
 
-loger1=scopelog("LOGER1")
-loger2=scopelog("LOGER2")
+loger1=log.scopelog("LOGER1")
+loger2=log.scopelog("LOGER2")
 del loger2
 del loger1
 
