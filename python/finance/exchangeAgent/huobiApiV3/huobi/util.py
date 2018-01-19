@@ -4,10 +4,13 @@
 import hashlib
 import time
 import urllib
-#python3
-#import urllib.parse
-#import urllib.request
-import urllib2
+
+import sys
+if(sys.version_info.major == 2):
+    import urllib2
+else:
+    import urllib.parse
+    import urllib.request
 
 import requests
 
@@ -55,8 +58,10 @@ def send2api(pParams, extra):
 def createSign(params):
     params['secret_key'] = SECRET_KEY;
     params = sorted(params.items(), key=lambda d: d[0], reverse=False)
-    #message = urllib.parse.urlencode(params)
-    message = urllib.urlencode(params)
+    if(sys.version_info.major == 2):
+        message = urllib.urlencode(params)
+    else:
+        message = urllib.parse.urlencode(params)
     message = message.encode(encoding='UTF8')
     m = hashlib.md5()
     m.update(message)
@@ -72,8 +77,10 @@ request
 
 def httpRequest(url, params):
     '''
-    #postdata = urllib.parse.urlencode(params)
-    postdata = urllib.urlencode(params)
+    if(sys.version_info.major == 2):
+        postdata = urllib.urlencode(params)
+    else:
+        postdata = urllib.parse.urlencode(params)
     postdata = postdata.encode('utf-8')
 
     fp = urllib2.urlopen(url, postdata, timeout = 20)
@@ -89,9 +96,10 @@ def httpRequest(url, params):
         "Content-type": "application/x-www-form-urlencoded",
     }
 
-
-    #postdata = urllib.parse.urlencode(params)
-    postdata = urllib.urlencode(params)
+    if(sys.version_info.major == 2):
+        postdata = urllib.urlencode(params)
+    else:
+        postdata = urllib.parse.urlencode(params)
     # postdata = postdata.encode('utf-8')
     response = requests.post(url, postdata, headers=headers, timeout=20)
     if response.status_code == 200:

@@ -4,5 +4,4 @@
 #__all__=['log', 'scopelog', 'config']
 
 from .config import *
-from .pythonLib import *
-import log
+from .log    import *

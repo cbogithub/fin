@@ -2,8 +2,11 @@
 # -*- coding: utf-8 -*-
 
 
-from system.pythonLib import configparser
-
+import sys
+if(sys.version_info.major == 2):
+    import ConfigParser as configparser
+else:
+    import configparser
 
 class config:
     'config: read/write config file'

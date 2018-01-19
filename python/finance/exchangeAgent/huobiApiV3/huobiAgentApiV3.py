@@ -4,7 +4,6 @@
 from .huobi import util as HuobiUtils, huobiService as HuobiServices
 
 from ...finance import *
-import system.pythonLib as pythonLib
 import system.log as log
 
 class huobiAgentApiV3(exchangeAgent):    

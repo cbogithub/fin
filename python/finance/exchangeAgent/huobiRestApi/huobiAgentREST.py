@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from .APIPython2_7 import HuobiUtil as HuobiUtils, HuobiService as HuobiServices
-#from .APIPython3 import Utils as HuobiUtils, HuobiServices as HuobiServices
+import sys
+if(sys.version_info.major == 2):
+    from .APIPython2_7 import HuobiUtil as HuobiUtils, HuobiService as HuobiServices
+else:
+    from .APIPython3 import Utils as HuobiUtils, HuobiServices as HuobiServices
 
 from ...finance import *
-import system.pythonLib as pythonLib
 import system.log as log
 
 class huobiAgentREST(exchangeAgent):       

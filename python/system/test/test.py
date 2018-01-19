@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from system import log
-from system.config import *
+from system import log, config
 
+print(log.DEBUG)
 '''
 log test
 '''
