@@ -8,38 +8,47 @@ else:
     from .APIPython3 import Utils as HuobiUtils, HuobiServices as HuobiServices
 
 from ...finance import *
+#import ...finance
 import system.log as log
 
 class huobiAgentREST(exchangeAgent):       
-    def __init__(self, accessKey, secretKey, currency=CNY, commodity=BTC):
-        self.__accessKey = accessKey
-        self.__secretKey = secretKey
+    def __init__(self, accessKey, secretKey):
+        exchangeAgent.__init__(self, accessKey, secretKey)
+        
         self.__accountId = ''
+                
+        self.availableCommodities      = []
+        self.exchangeMinQuantity       = {}
+        self.exchangeMaxQuantity       = {}
+        self.exchangeFrequency         = 10
         
-        
-        exchangeAgent.__init__(self, compair(commodity, currency))
-        
+        self.getAccounts               = object.callback(self.__getAccounts)
+        self.getKlines                 = object.callback(self.__getKlines)
+        self.getMarketDepth            = object.callback(self.__getMarketDepth)
+        self.getSymbols                = object.callback(HuobiServices.get_symbols)
+
+
+
+    def __commodityPairSymbol(self, commodityPair):
         symbols = {
             CNY.code  : "cny",
             BTC.code  : "btc",
             LTC.code  : "ltc",
             USDT.code : "usdt"
         }        
-        self.__compairSymbol = symbols[self.pair.base.code]+symbols[self.pair.quote.code]
-        
-       
-        self.getKlines                 = exchangeAgent.method(self.__getKlines)
-        self.getMarketDepth            = exchangeAgent.method(self.__getMarketDepth)
-        self.getSymbols                = exchangeAgent.method(HuobiServices.get_symbols)
-        self.getAccounts               = exchangeAgent.method(self.__getAccounts)
+        return symbols[commodityPair.base.code]+symbols[commodityPair.quote.code]
 
     def __setAPIKey(self):
-        HuobiUtils.ACCESS_KEY = self.__accessKey
-        HuobiUtils.SECRET_KEY = self.__secretKey
-        HuobiUtils.ACCOUNT_ID = self.__accountId
+        HuobiUtils.ACCESS_KEY = self._username
+        HuobiUtils.SECRET_KEY = self._password
+        HuobiUtils.ACCOUNT_ID = self.__accountId        
+           
     
-
-    def __getKlines(self, period, size=150):
+    def __getAccounts(self):
+        self.__setAPIKey()
+        return HuobiServices.get_accounts()
+        
+    def __getKlines(self, commodityPair, period, size=150):
         periodKey = {
             Kmap.period.m1 : "1min",
             Kmap.period.m5 : "5min",
@@ -51,12 +60,9 @@ class huobiAgentREST(exchangeAgent):
             Kmap.period.M1 : "1month",
             Kmap.period.Y1 : "1year"                                                                                                
         }
-        return HuobiServices.get_kline(self.__compairSymbol, periodKey[period], size)
+        return HuobiServices.get_kline(self.__commodityPairSymbol(commodityPair), periodKey[period], size)
         
-    def __getMarketDepth(self, depth):
-        return HuobiServices.get_depth(self.__compairSymbol, "step"+str(depth))
-    
-    def __getAccounts(self):
-        self.__setAPIKey()
-        return HuobiServices.get_accounts()
+    def __getMarketDepth(self, commodityPair, depth):
+        return HuobiServices.get_depth(self.__commodityPairSymbol(commodityPair), "step"+str(depth))
+
         

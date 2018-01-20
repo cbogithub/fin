@@ -3,7 +3,6 @@
 
 from system import log, config
 
-print(log.DEBUG)
 '''
 log test
 '''

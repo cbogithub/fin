@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 
-import system.log
+from system import object, log
 
-financeLog = system.log.getStreamLogger('finance')
+financeLog = log.getStreamLogger('finance')
 
 '''
 abstract model
@@ -39,7 +39,7 @@ USDT = commodity('USDT', 'B', 0)
 
 
 
-class compair:
+class commodityPair:
     def __init__(self, base, quote = CNY):
         self.base  = base
         self.quote = quote
@@ -80,63 +80,6 @@ class order:
     def __init__(self, quantity=0, amount=0):
         pass
 
-'''
-rootaccount - plat - account (per compair) - connection
-'''
-class exchangeAgent:
-    class method:
-        def __init__(self, run=0):
-            if(run == 0):
-                self.__support = False
-            else:
-                self.__support = True
-                self.__run       = run
-
-        def run(self, *a):
-            import time
-            startTime = time.time()
-            ret = self.__run(*a)
-            endTime = time.time()
-            print("method run cost %d ms" % int(round((endTime-startTime) * 1000))) 
-            return ret
-
-              
-    def __init__(self, compair):
-        self.pair                      = compair
-        
-        # getKlines (period, size)
-        self.getKlines                 = self.method(self)
-        
-        self.historyRequest            = self.method(self)
-        self.getAccountInfo            = self.method(self)
-        self.getOrders                 = self.method(self)
-        self.getOrderInfo              = self.method(self)
-        self.buyLimit                  = self.method(self)
-        self.buyMarket                 = self.method(self)
-        self.sellLimit                 = self.method(self)
-        self.sellMarket                = self.method(self)
-        self.getNewDealOrders          = self.method(self)
-        self.cancelOrder               = self.method(self)
-        self.getTicker                 = self.method(self)        
-        self.getDepth                  = self.method(self)
-
-
-'''
-    def historyRequest():
-    def getAccountInfo():
-    def getOrders():
-    def getOrderInfo(, id):
-    def buy(price, amount, tradePassword, tradeid):
-    def buyMarket(price, amount, tradePassword, tradeid):
-    def sell(price, amount, tradePassword, tradeid):
-    def sellMarket(price, amount, tradePassword, tradeid):
-    def getNewDealOrders():
-    def getOrderIdByTradeId(tradeid):
-    def cancelOrder(id):
-    def getTicker():
-    def getDepth(depth=5):
-'''
-
 class account:
     def __init__(self, exchangeConnection, measureCommodity = CNY):
         self.__exchangeConnection = exchangeConnection
@@ -152,6 +95,46 @@ class account:
 
     def changePosition(self):
         return self.agent.orderRequest()
+        
+'''
+rootaccount - plat - account (per compair) - connection
+'''
+class exchangeAgent:
+    class exchangeCommodityPair:
+        def __init__(self, pair):
+            self.__pair = pair
+            self.exchangeMinQuantity = None
+            self.exchangeMaxQuantity = None
+            self.tradeTax            = 0
+
+    def __init__(self, username="", password=""):
+        self._username                 = username
+        self._password                 = password
+        
+        # trade info
+        self.exchangeCommodityPair     = []
+        self.exchangeFrequency         = 10
+       
+        # account access 
+        self.getAccountInfo            = object.callback() #()
+
+        # makert
+        self.getKlines                 = object.callback() #(compair, period, size)
+        self.getTicker                 = object.callback() #()       
+        self.getDepth                  = object.callback() #(depth)    
+        self.historyRequest            = object.callback() #()
+        
+        # order
+        self.getOrders                 = object.callback() #(commodityPair)
+        self.getOrderInfo              = object.callback() #(commodityPair, id)
+        self.buyLimit                  = object.callback() #(commodityPair, price, amount, tradePassword, tradeid)
+        self.buyMarket                 = object.callback() #(commodityPair, price, amount, tradePassword, tradeid)
+        self.sellLimit                 = object.callback() #(commodityPair, price, amount, tradePassword, tradeid)
+        self.sellMarket                = object.callback() #(commodityPair, price, amount, tradePassword, tradeid)
+        self.getNewDealOrders          = object.callback() #(commodityPair)
+        self.cancelOrder               = object.callback() #(commodityPair, id)
+
+
 
 
 '''

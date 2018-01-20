@@ -5,3 +5,4 @@
 
 from .config import *
 from .log    import *
+from .object import *
