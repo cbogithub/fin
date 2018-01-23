@@ -35,6 +35,6 @@ financeLog.info(huobiRest.getSymbols.run())
 financeLog.info("--------------------- getAccounts")
 financeLog.info(huobiRest.getAccounts.run())
 
-
-
+financeLog.info("--------------------- getBalance")
+financeLog.info(huobiRest.getBalance.run())
 

@@ -42,7 +42,7 @@ class callback:
             raise log.crash("callback function NOT exist!")
         startTime = time.time()
         ret = self.__run(*a)
-        self.timeStat.read(int(round((time.time()-startTime) * 1000)))
+        self.timeStat.add(int(round((time.time()-startTime) * 1000)))
         log.getLogger("object.callback").debug("run %s with %d ms" % (self.__run.__name__, self.timeStat.last()))
         return ret 
 
@@ -52,7 +52,7 @@ class statistics:
     def __init__(self):
         self.values = []
 
-    def read(self, value):
+    def add(self, value):
         self.values.append(value)
     
 

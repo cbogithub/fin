@@ -23,6 +23,8 @@ class huobiAgentREST(exchangeAgent):
         self.exchangeFrequency         = 10
         
         self.getAccounts               = object.callback(self.__getAccounts)
+        self.getBalance                = object.callback(self.__getBalance)
+
         self.getKlines                 = object.callback(self.__getKlines)
         self.getMarketDepth            = object.callback(self.__getMarketDepth)
         self.getSymbols                = object.callback(HuobiServices.get_symbols)
@@ -47,6 +49,10 @@ class huobiAgentREST(exchangeAgent):
     def __getAccounts(self):
         self.__setAPIKey()
         return HuobiServices.get_accounts()
+    
+    def __getBalance(self):
+        self.__setAPIKey()
+        return HuobiServices.get_balance()
         
     def __getKlines(self, commodityPair, period, size=150):
         periodKey = {

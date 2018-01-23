@@ -1,0 +1,24 @@
+{
+    "profitmode": 1,
+    "exchange1": "bittrex",
+    "exchange2": "huobipro",
+    "bittrex": {
+        "apiKey": "",
+        "secret": ""
+    },
+    "binance": {
+        "apiKey": "",
+        "secret": ""
+    },
+    "huobipro": {
+        "apiKey": "",
+        "secret": ""
+    },
+    "Base": "SNT",
+    "Quote": "ETH",
+    "single_trade_amount_limit_min": 100,
+    "single_trade_amount_limit_max": 50000,
+    "base_amount_limit": 420000,
+    "profit_limit": 0.006
+}
+

@@ -105,26 +105,27 @@ class exchangeAgent:
             self.__pair = pair
             self.exchangeMinQuantity = None
             self.exchangeMaxQuantity = None
-            self.tradeTax            = 0
+            self.tradeCost           = 0
 
     def __init__(self, username="", password=""):
         self._username                 = username
         self._password                 = password
         
-        # trade info
+        #                   trade info
         self.exchangeCommodityPair     = []
         self.exchangeFrequency         = 10
        
-        # account access 
+        #                   account access 
         self.getAccountInfo            = object.callback() #()
 
-        # makert
-        self.getKlines                 = object.callback() #(compair, period, size)
-        self.getTicker                 = object.callback() #()       
-        self.getDepth                  = object.callback() #(depth)    
+        #                    makert
+        self.getKlines                 = object.callback() #(commodityPair, period, size)
+        self.getTicker                 = object.callback() #()
+               
+        self.getMarketDepth            = object.callback() #(commodityPair, depth)    
         self.historyRequest            = object.callback() #()
         
-        # order
+        #                     order
         self.getOrders                 = object.callback() #(commodityPair)
         self.getOrderInfo              = object.callback() #(commodityPair, id)
         self.buyLimit                  = object.callback() #(commodityPair, price, amount, tradePassword, tradeid)
@@ -133,6 +134,9 @@ class exchangeAgent:
         self.sellMarket                = object.callback() #(commodityPair, price, amount, tradePassword, tradeid)
         self.getNewDealOrders          = object.callback() #(commodityPair)
         self.cancelOrder               = object.callback() #(commodityPair, id)
+
+    def costPrice(bid, ask):
+        return bid - bid*self.tradeCost
 
 
 
@@ -171,6 +175,12 @@ class indicator:
 
 class tradePolicy:
     def __init__(self):
+        pass
+    
+    def signal():
+        pass
+    
+    def run():
         pass
 
 

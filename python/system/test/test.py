@@ -7,6 +7,7 @@ from system import log, config
 log test
 '''
 loger=log.getStreamLogger("test", log.DEBUG)
+loger=log.getFileLogger("test", "system/test/test.log", log.DEBUG)
 
 loger.debug('============= test log ========')
 loger.debug('debug')
