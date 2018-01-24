@@ -170,7 +170,11 @@ class spreadTrade(trade.policy):
         self.__startTime = time.time()
         self.__symbolExchanges  = {}
         self.__spreadDiff = {}
-        
+
+        # watch mode, not clean data
+        for  symbol in self.__symbols:
+            self.__spreadDiff[symbol] = {}
+
         self.init()
 
     def init(self, params={}):
@@ -195,6 +199,7 @@ class spreadTrade(trade.policy):
 
         # validate pair
         for  symbol in self.__symbols:
+            #self.__spreadDiff[symbol] = {} # watch mode, not clean data
             self.__symbolExchanges[symbol] = []
             for exchange in exchanges:
                 if symbol in exchange.symbols():
@@ -202,7 +207,6 @@ class spreadTrade(trade.policy):
 
         # init index: diff                
         for  symbol in self.__symbols:
-            self.__spreadDiff[symbol] = {}
             for ex1 in self.__symbolExchanges[symbol]:
                 match = False
                 for ex2 in self.__symbolExchanges[symbol]:
