@@ -218,7 +218,8 @@ class spreadTrade(trade.policy):
     def deinit(self):
         for symbol in self.__symbols:
             for key in self.__spreadDiff[symbol].keys():
-                del self.__spreadDiff[symbol][key]
+                #del self.__spreadDiff[symbol][key]
+                pass # watch mode, not clean data
         
         for  symbol in self.__symbols:
             for exchange in self.__symbolExchanges[symbol]:
