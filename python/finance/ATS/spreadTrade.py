@@ -62,11 +62,11 @@ class dataStat:
         if(len(self.__data) >= self.__avgPeriod): 
             avg = self.average(self.__avgPeriod)
             relation = 0
-            if(value >= avg+radii):
+            if(value >= avg+self.__radii):
                 relation = 1
                 if(self.__relation != relation):
                     self.__upHit += 1
-            if(value <= avg-radii):
+            if(value <= avg-self.radii):
                 relation = -1
                 if(self.__relation != relation):
                     self.__downHit += 1                
@@ -125,6 +125,10 @@ class spreadDiff:
         spreadTradeLogger.debug("%s - %s : %s %%" % (self.exchange2, self.exchange1, 100*(orderbook2['bids'][0][0] - orderbook1['asks'][0][0])/orderbook2['bids'][0][0]))
         
     def checkSignal(self):
+        spreadTradeLogger.debug("%s - %s : [%s - %s, %s], hit[%s, %s] cnt:%s, avg:%s, " % (self.exchange1, self.exchange2, self.diff12.min(), self.diff12.max(), self.diff12.max()- self.diff12.min(), self.diff12.upHit(), self.diff12.downHit(), self.diff12.cnt(), self.diff12.average()))
+        spreadTradeLogger.debug("%s - %s : [%s - %s, %s], hit[%s, %s] cnt:%s, avg:%s, " % (self.exchange2, self.exchange1, self.diff21.min(), self.diff21.max(), self.diff21.max()- self.diff21.min(), self.diff21.upHit(), self.diff21.downHit(), self.diff21.cnt(), self.diff21.average()))
+
+    def report(self):
         spreadTradeLogger.info("%s - %s : [%s - %s, %s], hit[%s, %s] cnt:%s, avg:%s, " % (self.exchange1, self.exchange2, self.diff12.min(), self.diff12.max(), self.diff12.max()- self.diff12.min(), self.diff12.upHit(), self.diff12.downHit(), self.diff12.cnt(), self.diff12.average()))
         spreadTradeLogger.info("%s - %s : [%s - %s, %s], hit[%s, %s] cnt:%s, avg:%s, " % (self.exchange2, self.exchange1, self.diff21.min(), self.diff21.max(), self.diff21.max()- self.diff21.min(), self.diff21.upHit(), self.diff21.downHit(), self.diff21.cnt(), self.diff21.average()))
 
@@ -272,7 +276,7 @@ class spreadTrade(trade.policy):
             
         # update diff
         for symbol in self.__symbols:
-            spreadTradeLogger.info("------------ check %s -----------" % symbol)
+            spreadTradeLogger.debug("------------ check %s -----------" % symbol)
             for key in self.__spreadDiff[symbol].keys():
                 self.__spreadDiff[symbol][key].addOderBook(orderBooks[symbol][key.split('/')[0]], orderBooks[symbol][key.split('/')[1]])
                 self.__spreadDiff[symbol][key].checkSignal()
@@ -304,5 +308,10 @@ class spreadTrade(trade.policy):
                 self.check()                      
             spreadTradeLogger.debug(" finished the %d check (hit %d, restart %d), sleep %d s for next check, total run %s s" % (checkCnt, hit, restart, self.__loopPeriod, runtime))
             time.sleep(self.__loopPeriod)
-
-        spreadTradeLogger.info(" stop run spreadTrade !")   
+            
+        spreadTradeLogger.info(" ################### spreadTrade report: ##########")             
+        for symbol in self.__symbols:
+            spreadTradeLogger.info("------------ check %s -----------" % symbol)
+            for key in self.__spreadDiff[symbol].keys():
+                self.__spreadDiff[symbol][key].report()
+        spreadTradeLogger.info(" spreadTrade stoped!")   
