@@ -120,8 +120,8 @@ class spreadDiff:
     def addOderBook(self, orderbook1, orderbook2):
         if(orderbook1['bids'][0][0]==0 or orderbook2['bids'][0][0]==0):
             return
-        self.diff12.add((orderbook1['bids'][0][0] - orderbook2['asks'][0][0])/orderbook1['bids'][0][0])
-        self.diff21.add((orderbook2['bids'][0][0] - orderbook1['asks'][0][0])/orderbook2['bids'][0][0])        
+        self.diff12.add(100*(orderbook1['bids'][0][0] - orderbook2['asks'][0][0])/orderbook1['bids'][0][0])
+        self.diff21.add(100*(orderbook2['bids'][0][0] - orderbook1['asks'][0][0])/orderbook2['bids'][0][0])        
         spreadTradeLogger.debug("%s - %s : %s %%" % (self.exchange1, self.exchange2, 100*(orderbook1['bids'][0][0] - orderbook2['asks'][0][0])/orderbook1['bids'][0][0]))
         spreadTradeLogger.debug("%s - %s : %s %%" % (self.exchange2, self.exchange1, 100*(orderbook2['bids'][0][0] - orderbook1['asks'][0][0])/orderbook2['bids'][0][0]))
         
@@ -235,7 +235,7 @@ class spreadTrade(trade.policy):
                     spreadTradeLogger.warning(" %s loadMarkets failed %s tims, wait %s s to retry!" % (exchange.id(), cnt, period))
                     time.sleep(period)
 
-    def __fetchOderbook(self, exchange, symbol, retry=3, period=3):
+    def __fetchOderbook(self, exchange, symbol, retry=2, period=1):
         if(not self.__safeMode):
             return exchange.fetchOrderBook(symbol)
         else:    
