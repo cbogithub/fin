@@ -170,8 +170,7 @@ class spreadTrade(trade.policy):
         self.__symbolExchanges  = {}
         self.__spreadDiff = {}
 
-        # watch mode, not clean data
-        for  symbol in self.__symbols:
+        for symbol in self.__symbols:
             self.__spreadDiff[symbol] = {}
 
         self.init()
@@ -212,8 +211,9 @@ class spreadTrade(trade.policy):
                     if(	ex1 == ex2):
                         match = True
                     elif(match):
-                        ex = ex1.id()+"/"+ex2.id()
-                        self.__spreadDiff[symbol][ex1.id()+"/"+ex2.id()] = spreadDiff(ex1.id(), ex2.id())
+                        key = ex1.id()+"/"+ex2.id()
+                        if(not self.__spreadDiff[symbol].has_key(key)): # watch mode, not clean data
+                            self.__spreadDiff[symbol][key] = spreadDiff(ex1.id(), ex2.id())
 
     def deinit(self):
         for symbol in self.__symbols:
