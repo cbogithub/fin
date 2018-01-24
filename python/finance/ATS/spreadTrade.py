@@ -267,6 +267,7 @@ class spreadTrade(trade.policy):
             
         # update diff
         for symbol in self.__symbols:
+            spreadTradeLogger.info("------------ check %s -----------" % symbol)
             for key in self.__spreadDiff[symbol].keys():
                 self.__spreadDiff[symbol][key].addOderBook(orderBooks[symbol][key.split('/')[0]], orderBooks[symbol][key.split('/')[1]])
                 self.__spreadDiff[symbol][key].checkSignal()
