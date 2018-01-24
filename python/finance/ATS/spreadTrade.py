@@ -127,7 +127,7 @@ class spreadDiff:
         
     def checkSignal(self):
         spreadTradeLogger.info("%s - %s : [%s - %s, %s], hit[%s, %s] cnt:%s, avg:%s, " % (self.exchange1, self.exchange2, self.diff12.min(), self.diff12.max(), self.diff12.max()- self.diff12.min(), self.diff12.upHit(), self.diff12.downHit(), self.diff12.cnt(), self.diff12.average()))
-        spreadTradeLogger.info("%s - %s : [%s - %s, %s], hit[%s, %s] cnt:%s, avg:%s, " % (self.exchange2, self.exchange1, self.diff12.min(), self.diff12.max(), self.diff21.max()- self.diff21.min(), self.diff21.upHit(), self.diff21.downHit(), self.diff21.cnt(), self.diff21.average()))
+        spreadTradeLogger.info("%s - %s : [%s - %s, %s], hit[%s, %s] cnt:%s, avg:%s, " % (self.exchange2, self.exchange1, self.diff21.min(), self.diff21.max(), self.diff21.max()- self.diff21.min(), self.diff21.upHit(), self.diff21.downHit(), self.diff21.cnt(), self.diff21.average()))
 
 
 class spreadTrade(trade.policy):
