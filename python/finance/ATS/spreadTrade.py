@@ -114,18 +114,20 @@ class spreadDiff:
     def __init__(self, exchangeId1, exchangeId2):
         self.exchange1 = exchangeId1
         self.exchange2 = exchangeId2
-        self.diff12 = dataStat(10, 0.005)
-        self.diff21 = dataStat(10, 0.005)
+        self.diff12 = dataStat(10, 0.003)
+        self.diff21 = dataStat(10, 0.003)
 
     def addOderBook(self, orderbook1, orderbook2):
+        if(orderbook1['bids'][0][0]==0 or orderbook2['bids'][0][0]==0):
+            return
         self.diff12.add((orderbook1['bids'][0][0] - orderbook2['asks'][0][0])/orderbook1['bids'][0][0])
         self.diff21.add((orderbook2['bids'][0][0] - orderbook1['asks'][0][0])/orderbook2['bids'][0][0])        
         spreadTradeLogger.debug("%s - %s : %s %%" % (self.exchange1, self.exchange2, 100*(orderbook1['bids'][0][0] - orderbook2['asks'][0][0])/orderbook1['bids'][0][0]))
         spreadTradeLogger.debug("%s - %s : %s %%" % (self.exchange2, self.exchange1, 100*(orderbook2['bids'][0][0] - orderbook1['asks'][0][0])/orderbook2['bids'][0][0]))
         
     def checkSignal(self):
-        spreadTradeLogger.info("%s - %s : [%s - %s], hit[%s, %s] cnt:%s, avg:%s, " % (self.exchange1, self.exchange2, self.diff12.min(), self.diff12.max(), self.diff12.upHit(), self.diff12.downHit(), self.diff12.cnt(), self.diff12.average()))
-        spreadTradeLogger.info("%s - %s : [%s - %s], hit[%s, %s] cnt:%s, avg:%s, " % (self.exchange2, self.exchange1, self.diff12.min(), self.diff12.max(), self.diff21.upHit(), self.diff21.downHit(), self.diff21.cnt(), self.diff21.average()))
+        spreadTradeLogger.info("%s - %s : [%s - %s, %s], hit[%s, %s] cnt:%s, avg:%s, " % (self.exchange1, self.exchange2, self.diff12.min(), self.diff12.max(), self.diff12.max()- self.diff12.min(), self.diff12.upHit(), self.diff12.downHit(), self.diff12.cnt(), self.diff12.average()))
+        spreadTradeLogger.info("%s - %s : [%s - %s, %s], hit[%s, %s] cnt:%s, avg:%s, " % (self.exchange2, self.exchange1, self.diff12.min(), self.diff12.max(), self.diff21.max()- self.diff21.min(), self.diff21.upHit(), self.diff21.downHit(), self.diff21.cnt(), self.diff21.average()))
 
 
 class spreadTrade(trade.policy):
@@ -135,6 +137,7 @@ class spreadTrade(trade.policy):
     KEY_RATE_LIMIT        = "rate_limit"     
     KEY_MARKET_TRADE_RATE = "market_trade_rate"
     KEY_ORDER_EXPIRE      = "order_expire" 
+    KEY_RUN_SAFE          = "run_safe"
     KEY_RUN_TIME          = "run_time"
         
     def __init__(self, params={}):
@@ -146,6 +149,7 @@ class spreadTrade(trade.policy):
             self.KEY_RATE_LIMIT        : 2,            
             self.KEY_MARKET_TRADE_RATE : 0.5, 
             self.KEY_ORDER_EXPIRE      : 3,
+            self.KEY_RUN_SAFE          : True,
             self.KEY_RUN_TIME          : 60
         }
         
@@ -160,6 +164,7 @@ class spreadTrade(trade.policy):
         self.__rateLimit        = paramSet[self.KEY_RATE_LIMIT]        
         self.__marketTradeRate  = paramSet[self.KEY_MARKET_TRADE_RATE]
         self.__orderExpire      = paramSet[self.KEY_ORDER_EXPIRE]
+        self.__safeMode         = paramSet[self.KEY_RUN_SAFE]
         self.__runTimeLen       = paramSet[self.KEY_RUN_TIME]
 
         self.__startTime = time.time()
@@ -175,12 +180,18 @@ class spreadTrade(trade.policy):
         # init exchanges
         exchanges = []
         for exId in self.__exchangeIds:
-            exchanges.append(exchangeAgent.ccxtExchange(exId))
+            exchanges.append(exchangeAgent.ccxtExchange(exId, params))
 
         
         # load markets
+        failedExchanges = []
         for ex in exchanges:
-            ex.loadMarkets()
+            if(self.__loadMarkets(ex) == None):
+                spreadTradeLogger.error(" %s loadMarkets failed!  ignore this exchange!" % ex.id())
+                failedExchanges.append(ex)
+        
+        for ex in failedExchanges:
+            exchanges.remove(ex)
 
         # validate pair
         for  symbol in self.__symbols:
@@ -210,6 +221,34 @@ class spreadTrade(trade.policy):
             for exchange in self.__symbolExchanges[symbol]:
                 del exchange
 
+    def __loadMarkets(self, exchange, retry=3, period=3):
+        if(not self.__safeMode):
+            return exchange.loadMarkets()
+        else:
+            for cnt in range(1, retry+1):
+                try:
+                    return exchange.loadMarkets()
+                except:
+                    if(cnt >= retry):
+                        spreadTradeLogger.warning(" %s loadMarkets failed %s tims, ignore this exchange!" % (exchange.id(), cnt))
+                        return None
+                    spreadTradeLogger.warning(" %s loadMarkets failed %s tims, wait %s s to retry!" % (exchange.id(), cnt, period))
+                    time.sleep(period)
+
+    def __fetchOderbook(self, exchange, symbol, retry=3, period=3):
+        if(not self.__safeMode):
+            return exchange.fetchOrderBook(symbol)
+        else:    
+            for cnt in range(1, retry+1):
+               try:
+                    return exchange.fetchOrderBook(symbol)
+                except:            
+                    if(cnt >= retry):
+                        spreadTradeLogger.warning(" %s fetchOrderBook failed %s tims, skip this fetch!" % (exchange.id(), cnt))
+                        return None
+                    spreadTradeLogger.warning(" %s fetchOrderBook failed %s tims, wait %s s to retry!" % (exchange.id(), cnt, period))
+                    time.sleep(period)
+
                                                                 
     def check(self):
         #  upate market
@@ -218,8 +257,13 @@ class spreadTrade(trade.policy):
             orderBooks[symbol] = {}
             time.sleep(self.__rateLimit) 
             for exchange in self.__symbolExchanges[symbol]:
-                orderBooks[symbol][exchange.id()] = exchange.fetchOrderBook(symbol)
-                spreadTradeLogger.debug("%s - %s :  bid %s(%s), ask %s(%s)" % (symbol, exchange.id(), orderBooks[symbol][exchange.id()]['bids'][0][0], orderBooks[symbol][exchange.id()]['bids'][0][1], orderBooks[symbol][exchange.id()]['asks'][0][0], orderBooks[symbol][exchange.id()]['asks'][0][1]))
+                ret = self.__fetchOderbook(exchange, symbol)
+                if(ret == None):
+                    spreadTradeLogger.error("%s - %s :fetch oderbook faild!" % (symbol, exchange.id()))
+                    orderBooks[symbol][exchange.id()] = {'bids': [[0, 0]], 'asks': [[0,0]]}                     
+                else:
+                    orderBooks[symbol][exchange.id()] = ret
+                    spreadTradeLogger.debug("%s - %s :  bid %s(%s), ask %s(%s)" % (symbol, exchange.id(), orderBooks[symbol][exchange.id()]['bids'][0][0], orderBooks[symbol][exchange.id()]['bids'][0][1], orderBooks[symbol][exchange.id()]['asks'][0][0], orderBooks[symbol][exchange.id()]['asks'][0][1]))
             
         # update diff
         for symbol in self.__symbols:
@@ -233,20 +277,26 @@ class spreadTrade(trade.policy):
         hit = 0
         restart = 0
         
-        while (True):   
-            try:
-                runtime = time.time() - self.__startTime
-                if(runtime >= self.__runTimeLen):
-                    spreadTradeLogger.info("policy run %s s (>= %s), now exit...", runtime, self.__runTimeLen)
-                    break;     
-                checkCnt += 1
-                self.check()
-                spreadTradeLogger.debug(" finished the %d check (hit %d, restart %d), sleep %d s for next check, total run %s s" % (checkCnt, hit, restart, self.__loopPeriod, runtime))
-                time.sleep(self.__loopPeriod)
-            except:
-                restart += 1
-                spreadTradeLogger.error(" oops, the %d restarting !" % restart)
-                self.deinit()
-                time.sleep(self.__rateLimit)
-                self.init()
+        while (True): 
+            runtime = time.time() - self.__startTime
+            if(runtime >= self.__runTimeLen):
+                spreadTradeLogger.info("policy run %s s (>= %s), now exit...", runtime, self.__runTimeLen)
+                break;     
+            checkCnt += 1
+          
+            if(self.__safeMode):
+                try:
+                    self.check()
+                except:
+                    restart += 1
+                    spreadTradeLogger.error(" oops, the %d restarting !" % restart)
+                    self.deinit()
+                    time.sleep(self.__rateLimit * 2)
+                    self.init()
+                    continue
+            else:
+                self.check()                      
+            spreadTradeLogger.debug(" finished the %d check (hit %d, restart %d), sleep %d s for next check, total run %s s" % (checkCnt, hit, restart, self.__loopPeriod, runtime))
+            time.sleep(self.__loopPeriod)
+
         spreadTradeLogger.info(" stop run spreadTrade !")   
