@@ -1,5 +1,7 @@
-log/
 account.conf
+account.json
+exchangeAccount.json
+log/
 .DS_Store
 *.pyc
 __pycache__

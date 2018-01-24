@@ -1,0 +1,15 @@
+{
+
+    "huobipro": {
+        "rate_limit" : 1,
+        "symbols_profile": {
+            "BTC/USDT"  : {
+                "price_precision"  : 2,
+                "amount_precision" : 4,
+                "amount_min"       : 0.001,
+                "amount_max"       : 1000000,
+                "trade_cost_rate"  : 0.002
+            }
+        }
+    }
+}

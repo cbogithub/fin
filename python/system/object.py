@@ -47,6 +47,14 @@ class callback:
         return ret 
 
 
+def dicUpdateByKeys(dicCurrent, dicUpdate, keyList=None):
+    if (keyList):
+        for key in keyList:
+            if dicUpdate.has_key(key):
+                dicCurrent[key] = dicUpdate[key]
+    else:
+        for key,value in dicUpdate.items():
+            dicCurrent[key] = value
         
 class statistics:
     def __init__(self):

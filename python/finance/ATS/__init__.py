@@ -1,5 +1,5 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from .spreadMarket import *
+from .spreadTrade import *
 
