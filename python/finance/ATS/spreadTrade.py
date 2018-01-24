@@ -60,7 +60,7 @@ class dataStat:
         self.__data.append(value)
         
         if(len(self.__data) >= self.__avgPeriod): 
-            avg = average(self.__avgPeriod)
+            avg = self.average(self.__avgPeriod)
             relation = 0
             if(value >= avg+radii):
                 relation = 1
@@ -89,7 +89,6 @@ class dataStat:
         return self.__upHit
     def downHit(self):
         return self.__downHit
-
 
         
     def __listTotal(self, list):
