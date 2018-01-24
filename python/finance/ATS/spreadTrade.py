@@ -135,7 +135,8 @@ class spreadTrade(trade.policy):
     KEY_RATE_LIMIT        = "rate_limit"     
     KEY_MARKET_TRADE_RATE = "market_trade_rate"
     KEY_ORDER_EXPIRE      = "order_expire" 
-    
+    KEY_RUN_TIME          = "run_time"
+        
     def __init__(self, params={}):
         # default
         paramSet = {
@@ -145,6 +146,7 @@ class spreadTrade(trade.policy):
             self.KEY_RATE_LIMIT        : 2,            
             self.KEY_MARKET_TRADE_RATE : 0.5, 
             self.KEY_ORDER_EXPIRE      : 3,
+            self.KEY_RUN_TIME          : 60
         }
         
 
@@ -158,7 +160,9 @@ class spreadTrade(trade.policy):
         self.__rateLimit        = paramSet[self.KEY_RATE_LIMIT]        
         self.__marketTradeRate  = paramSet[self.KEY_MARKET_TRADE_RATE]
         self.__orderExpire      = paramSet[self.KEY_ORDER_EXPIRE]
-        
+        self.__runTimeLen       = paramSet[self.KEY_RUN_TIME]
+
+        self.__startTime = time.time()
         self.__symbolExchanges  = {}
         self.__spreadDiff = {}
         
@@ -230,10 +234,14 @@ class spreadTrade(trade.policy):
         restart = 0
         
         while (True):   
-            try:        
+            try:
+                runtime = time.time() - self.__startTime
+                if(runtime >= self.__runTimeLen):
+                    spreadTradeLogger.info("policy run %s s (>= %s), now exit...", runtime, self.__runTimeLen)
+                    break;     
                 checkCnt += 1
                 self.check()
-                spreadTradeLogger.debug(" finished the %d check (hit %d, restart %d), sleep %d s for next check" % (checkCnt, hit, restart, self.__loopPeriod))
+                spreadTradeLogger.debug(" finished the %d check (hit %d, restart %d), sleep %d s for next check, total run %s s" % (checkCnt, hit, restart, self.__loopPeriod, runtime))
                 time.sleep(self.__loopPeriod)
             except:
                 restart += 1
@@ -241,4 +249,4 @@ class spreadTrade(trade.policy):
                 self.deinit()
                 time.sleep(self.__rateLimit)
                 self.init()
-            
+        spreadTradeLogger.info(" stop run spreadTrade !")   

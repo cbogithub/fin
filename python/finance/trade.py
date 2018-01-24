@@ -190,7 +190,8 @@ class exchange:
     KEY_SYMBOLS_AMOUNT_MIN       = "amount_min"
     KEY_SYMBOLS_AMOUNT_MAX       = "amount_max"
     KEY_SYMBOLS_TRADE_COST_RATE  = "trade_cost_rate"
-    
+
+        
     def __init__(self, exchangeId="", param={}):
         self.__exchangeId = exchangeId
 

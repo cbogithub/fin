@@ -11,7 +11,8 @@ watchProfile={
     "loop_period"        : 30,
     "rate_limit"         : 2,
     "order_expire"       : 2,
-    "markeet_trade_rate" : 0.1
+    "markeet_trade_rate" : 0.1,
+    "run_time"           : 60
 }
 
 hb = ATS.spreadTrade(watchProfile)
