@@ -166,9 +166,10 @@ class spreadTrade(trade.policy):
         self.__safeMode         = paramSet[self.KEY_RUN_SAFE]
         self.__runTimeLen       = paramSet[self.KEY_RUN_TIME]
 
-        self.__startTime = time.time()
-        self.__symbolExchanges  = {}
-        self.__spreadDiff = {}
+        self.__connectDebug    = False
+        self.__startTime       = time.time()
+        self.__symbolExchanges = {}
+        self.__spreadDiff      = {}
 
         for symbol in self.__symbols:
             self.__spreadDiff[symbol] = {}
@@ -226,7 +227,7 @@ class spreadTrade(trade.policy):
                 del exchange
 
     def __loadMarkets(self, exchange, retry=3, period=3):
-        if(not self.__safeMode):
+        if(self.__connectDebug):
             return exchange.loadMarkets()
         else:
             for cnt in range(1, retry+1):
@@ -240,7 +241,7 @@ class spreadTrade(trade.policy):
                     time.sleep(period)
 
     def __fetchOderbook(self, exchange, symbol, retry=2, period=1):
-        if(not self.__safeMode):
+        if(self.__connectDebug):
             return exchange.fetchOrderBook(symbol)
         else:    
             for cnt in range(1, retry+1):
