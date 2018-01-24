@@ -5,10 +5,10 @@ from finance import *
 
 
 watchProfile={
-#    "symbols"            : ["ETH/BTC"],
     "symbols"            : ['BTC/USDT','ETH/BTC','ETH/USDT','LTC/BTC','LTC/USDT', 'BCH/USDT','ETC/USDT','BTC/EUR','BTC/USD','ETH/USD','LTC/USD','BCH/BTC','BCH/ETH','BCH/USD','ETC/BTC','ETC/USD'],
-    "exchanges"          : ["huobipro", "bitfinex", "binance","okex"],
-    "loop_period"        : 30,
+#    "exchanges"          : ["gdax", "huobipro", "binance", "bithumb", "okex", "bitfinex", "kucoin", "bittrex", "poloniex", "okcoinusd", "bitstamp"],
+    "exchanges"          : ["gdax", "huobipro", "binance", "bithumb", "okex", "bitfinex", "kucoin", "bittrex", "okcoinusd", "bitstamp"],
+    "loop_period"        : 10,
     "rate_limit"         : 2,
     "order_expire"       : 2,
     "markeet_trade_rate" : 0.1,
