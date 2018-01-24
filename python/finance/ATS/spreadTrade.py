@@ -306,7 +306,7 @@ class spreadTrade(trade.policy):
                     continue
             else:
                 self.check()                      
-            spreadTradeLogger.debug(" finished the %d check (hit %d, restart %d), sleep %d s for next check, total run %s s" % (checkCnt, hit, restart, self.__loopPeriod, runtime))
+            spreadTradeLogger.info(" finished the %d check (hit %d, restart %d), sleep %d s for next check, total run %s s" % (checkCnt, hit, restart, self.__loopPeriod, runtime))
             time.sleep(self.__loopPeriod)
             
         spreadTradeLogger.info(" ################### spreadTrade report: ##########")             
