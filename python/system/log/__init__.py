@@ -17,7 +17,7 @@ FORMAT_DATA     = '%(message)s'
 FORMAT_LEVEL    = '%(asctime)s - %(levelname)s - %(message)s'
 FORMAT_RELATIVE = '%(relativeCreated)s - %(levelname)s - %(message)s'	
 FORMAT_FUNC     = '%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d; %(module)s:%(funcName)s()] - %(message)s'
-FORMAT_LOGGER   = '%(asctime)s - [%(name)s] - %(message)s'
+FORMAT_LOGGER   = '%(asctime)s - %(levelname)s - [%(name)s] - %(message)s'
 
 def getLogger(module='log', file='', level=None, format=None):
     if( file == '' ):
