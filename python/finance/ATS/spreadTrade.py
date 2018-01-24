@@ -7,7 +7,7 @@ from finance import *
 import time
 
 spreadTradeLogger = log.getFileLogger("spreadTrade", "log/spreadMarket.log")
-spreadTradeLogger = log.getStreamLogger('f.spreadTrade')    
+spreadTradeLogger = log.getStreamLogger('spreadTrade')    
         
 class orderBook:
     def __init__(self, orderbook):
