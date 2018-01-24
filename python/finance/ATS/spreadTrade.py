@@ -66,7 +66,7 @@ class dataStat:
                 relation = 1
                 if(self.__relation != relation):
                     self.__upHit += 1
-            if(value <= avg-self.radii):
+            if(value <= avg-self.__radii):
                 relation = -1
                 if(self.__relation != relation):
                     self.__downHit += 1                
