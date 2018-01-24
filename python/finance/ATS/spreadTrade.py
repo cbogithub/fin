@@ -240,7 +240,7 @@ class spreadTrade(trade.policy):
             return exchange.fetchOrderBook(symbol)
         else:    
             for cnt in range(1, retry+1):
-               try:
+                try:
                     return exchange.fetchOrderBook(symbol)
                 except:            
                     if(cnt >= retry):
