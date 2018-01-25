@@ -113,8 +113,8 @@ class spreadDiff:
     def __init__(self, exchangeId1, exchangeId2):
         self.exchange1 = exchangeId1
         self.exchange2 = exchangeId2
-        self.diff12 = dataStat(10, 0.003)
-        self.diff21 = dataStat(10, 0.003)
+        self.diff12 = dataStat(10, 0.005)
+        self.diff21 = dataStat(10, 0.005)
 
     def addOderBook(self, orderbook1, orderbook2):
         if(orderbook1['bids'][0][0]==0 or orderbook2['bids'][0][0]==0):
