@@ -269,7 +269,9 @@ class spreadTrade(trade.policy):
                 ret = self.__fetchOderbook(exchange, symbol)
                 if(ret == None):
                     spreadTradeLogger.error("%s - %s :fetch oderbook faild!" % (symbol, exchange.id()))
-                    orderBooks[symbol][exchange.id()] = {'bids': [[0, 0]], 'asks': [[0,0]]}                     
+                    orderBooks[symbol][exchange.id()] = {'bids': [[0, 0]], 'asks': [[0,0]]} 
+                elif(not ret.has_key('bids'))
+                    spreadTradeLogger.error("error order response", ret)                    
                 else:
                     orderBooks[symbol][exchange.id()] = ret
                     spreadTradeLogger.debug("%s - %s :  bid %s(%s), ask %s(%s)" % (symbol, exchange.id(), orderBooks[symbol][exchange.id()]['bids'][0][0], orderBooks[symbol][exchange.id()]['bids'][0][1], orderBooks[symbol][exchange.id()]['asks'][0][0], orderBooks[symbol][exchange.id()]['asks'][0][1]))
